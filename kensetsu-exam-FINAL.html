@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>建設機械 Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Sinhala:wght@400;500;700&family=Noto+Sans+Myanmar:wght@400;700&family=Noto+Sans+Thai:wght@400;700&family=Noto+Sans+Khmer:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#F5F3EE;--card:#fff;--text:#1A1A18;--muted:#6B6A65;--bdr:#E0DDD6;--accent:#2A2A27;--green:#1D9E75;--gbg:#E1F5EE;--gtxt:#0F6E56;--red:#E24B4A;--rbg:#FCEBEB;--rtxt:#A32D2D;--blue:#185FA5;--bbg:#E6F1FB;--btxt:#0C447C;--amber:#BA7517;--abg:#FAEEDA;--atxt:#854F0B;--hira:#1a3a6b;--hirabg:#eef3fb}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Noto Sans JP",system-ui,sans-serif}
+.screen{display:none;height:100vh;overflow-y:auto;flex-direction:column}
+.screen.active{display:flex}
+.hdr{background:var(--accent);color:#fff;padding:.875rem 1rem .75rem;flex-shrink:0}
+.hdr-t{font-size:10px;letter-spacing:.08em;opacity:.65;font-family:"DM Mono",monospace}
+.hdr-s{font-size:15px;font-weight:700;margin-top:3px}
+.hdr-co{font-size:11px;opacity:.7;margin-top:2px;font-family:"DM Mono",monospace}
+.hdr-act{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.hbtn{background:rgba(255,255,255,.12);border:none;color:#fff;padding:4px 11px;border-radius:6px;font-size:11px;cursor:pointer}
+.hbtn:hover{background:rgba(255,255,255,.22)}
+.prg-row{display:flex;align-items:center;gap:8px;margin-top:7px}
+.prg-trk{flex:1;height:3px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.prg-fill{height:100%;background:#5DCAA5;border-radius:99px;transition:width .35s}
+.prg-lbl{font-size:10px;font-family:"DM Mono",monospace;opacity:.65;white-space:nowrap}
+.body{flex:1;overflow-y:auto;padding:.875rem .875rem 5rem;max-width:540px;margin:0 auto;width:100%}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:1.125rem;margin-bottom:.75rem}
+.lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.stat-g{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:1.125rem}
+.stat{background:var(--bg);border-radius:8px;padding:.7rem;text-align:center}
+.stat-n{font-size:21px;font-weight:700;font-family:"DM Mono",monospace}
+.stat-n.g{color:var(--green)}.stat-n.r{color:var(--red)}.stat-n.b{color:var(--blue)}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.fg{margin-bottom:.875rem}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.fg input,.fg select{width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:9px;font-size:14px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.fg input:focus,.fg select:focus{border-color:var(--blue)}
+.btn{width:100%;padding:11px;border:none;border-radius:9px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.4rem}
+.btn:hover{opacity:.88}.btn.bl{background:var(--blue)}.btn.gr{background:var(--green)}
+.err{background:var(--rbg);color:var(--rtxt);border-radius:7px;padding:6px 10px;font-size:12px;margin-bottom:.75rem;display:none}
+.err.on{display:block}
+.co-badge{display:inline-flex;align-items:center;gap:5px;background:var(--bbg);color:var(--btxt);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-bottom:.875rem}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.125rem}
+.tab{padding:7px;border:none;border-radius:6px;background:transparent;cursor:pointer;font-size:12px;font-weight:500;font-family:inherit;color:var(--muted)}
+.tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.s-row{display:flex;align-items:center;gap:9px;padding:.7rem 0;border-bottom:1px solid var(--bdr)}
+.s-row:last-child{border-bottom:none}
+.s-av{width:34px;height:34px;border-radius:50%;background:var(--bbg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--btxt);flex-shrink:0}
+.s-info{flex:1;min-width:0}
+.s-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-sub{font-size:11px;color:var(--muted)}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
+.pass{background:var(--gbg);color:var(--gtxt)}.fail{background:var(--rbg);color:var(--rtxt)}
+.t-nav{display:flex;gap:3px;padding:.55rem .875rem;background:var(--bg);border-bottom:1px solid var(--bdr);overflow-x:auto;flex-shrink:0}
+.t-tab{white-space:nowrap;padding:5px 12px;border-radius:8px;border:none;background:transparent;font-size:11px;font-weight:500;cursor:pointer;color:var(--muted);font-family:inherit}
+.t-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.t-panel{display:none}.t-panel.active{display:block}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--bdr)}
+.set-row:last-child{border-bottom:none}
+.set-l{font-size:13px;font-weight:500}.set-s{font-size:11px;color:var(--muted);margin-top:2px}
+.sinput{padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.sbtn{padding:5px 11px;border-radius:7px;border:1px solid var(--bdr);background:var(--bg);font-size:11px;cursor:pointer;font-family:inherit}
+.sbtn.gr{border-color:var(--green);color:var(--gtxt);background:var(--gbg)}
+.sbtn.rd{border-color:var(--red);color:var(--rtxt);background:var(--rbg)}
+.sbtn.bl{border-color:var(--blue);color:var(--btxt);background:var(--bbg)}
+.q-num{font-family:"DM Mono",monospace;font-size:10px;color:var(--muted);margin-bottom:7px;letter-spacing:.06em}
+.q-ja{font-size:15px;font-weight:600;line-height:1.7;margin-bottom:7px}
+.q-hira{font-size:12px;color:var(--hira);background:var(--hirabg);border-radius:7px;padding:5px 9px;line-height:1.8;margin-bottom:5px}
+.q-roma{font-family:"DM Mono",monospace;font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:7px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ans-btn{padding:.75rem;border-radius:9px;border:1.5px solid var(--bdr);background:var(--bg);font-size:19px;cursor:pointer;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text)}
+.ans-btn .al{font-size:12px;font-weight:600}
+.ans-btn:disabled{cursor:default}
+.bc{background:var(--gbg)!important;border-color:var(--green)!important;color:var(--gtxt)!important}
+.bw{background:var(--rbg)!important;border-color:var(--red)!important;color:var(--rtxt)!important}
+.bd{opacity:.35}
+.fb{margin-top:8px;font-size:12px;padding:7px 10px;border-radius:7px;display:none}
+.fb.on{display:block}.fb.ok{background:var(--gbg);color:var(--gtxt)}.fb.ng{background:var(--rbg);color:var(--rtxt)}
+.sc-scr{display:none;text-align:center;padding:1.5rem 1rem}
+.sc-scr.on{display:block}
+.sc-ring{width:100px;height:100px;margin:0 auto 1.125rem;position:relative}
+.sc-ring svg{width:100px;height:100px;transform:rotate(-90deg)}
+.sc-ring-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sc-n{font-size:26px;font-weight:700;font-family:"DM Mono",monospace}
+.sc-d{font-size:12px;color:var(--muted);font-family:"DM Mono",monospace}
+.fc-pb{height:3px;background:var(--bdr);border-radius:99px;overflow:hidden;margin-bottom:.6rem}
+.fc-pf{height:100%;background:var(--green);border-radius:99px;transition:width .3s}
+.fc-cnt{font-family:"DM Mono",monospace;font-size:12px;color:var(--muted);text-align:center;margin-bottom:.6rem}
+.fc-card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:1.25rem;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:.875rem;cursor:pointer;user-select:none}
+.fc-front{display:block}.fc-back{display:none}
+.fc-card.flip .fc-front{display:none}.fc-card.flip .fc-back{display:block}
+.fc-ja{font-size:15px;font-weight:600;line-height:1.65;margin-bottom:.6rem}
+.fc-hira{font-size:12px;color:var(--hira);background:var(--hirabg);border-radius:7px;padding:5px 9px;line-height:1.8;margin-bottom:.4rem}
+.fc-roma{font-family:"DM Mono",monospace;font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:.6rem}
+.fc-tr{font-size:13px;line-height:1.75;background:#f9f7f4;border-radius:7px;padding:7px 9px;margin-bottom:.4rem}
+.fc-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:7px}
+.fc-ans-rev{text-align:center;padding:.6rem 0}
+.fc-badge{display:inline-block;padding:8px 22px;border-radius:99px;font-size:17px;font-weight:700;margin-bottom:.4rem}
+.fc-badge.t{background:var(--gbg);color:var(--gtxt)}.fc-badge.f{background:var(--rbg);color:var(--rtxt)}
+.fc-sub{font-size:12px;color:var(--muted);margin-bottom:.5rem}
+.fc-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.fc-btn{padding:9px 4px;border-radius:9px;border:1.5px solid var(--bdr);background:var(--bg);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text)}
+.fc-btn.kn{border-color:var(--green);background:var(--gbg);color:var(--gtxt)}
+.fc-btn.rv{border-color:var(--amber);background:var(--abg);color:var(--atxt)}
+.fc-btn.fl{border-color:var(--blue);background:var(--bbg);color:var(--btxt)}
+.fc-done{text-align:center;padding:1.5rem .875rem}
+.fc-stat-r{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:1.25rem 0}
+.fc-stat-b{background:var(--bg);border-radius:9px;padding:.7rem;text-align:center}
+.fc-stat-n{font-size:23px;font-weight:700;font-family:"DM Mono",monospace}
+.fc-stat-n.g{color:var(--green)}.fc-stat-n.a{color:var(--amber)}
+.fc-stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.v-srch{width:100%;padding:9px 13px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;background:var(--card);color:var(--text);outline:none;font-family:inherit;margin-bottom:.875rem}
+.v-srch:focus{border-color:var(--blue)}
+.v-item{background:var(--card);border:1px solid var(--bdr);border-radius:11px;padding:.875rem 1rem;margin-bottom:.5rem}
+.v-ih{display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:5px}
+.v-ja{font-size:13px;font-weight:600;line-height:1.6;flex:1}
+.v-ab{flex-shrink:0;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.v-ab.t{background:var(--gbg);color:var(--gtxt)}.v-ab.f{background:var(--rbg);color:var(--rtxt)}
+.v-hira{font-size:11px;color:var(--hira);margin-bottom:3px}
+.v-tr{font-size:11px;color:var(--muted);line-height:1.65}
+.bnav{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--bdr);padding:.5rem .75rem;display:flex;gap:5px;flex-shrink:0}
+.bnav-b{flex:1;padding:8px 4px;border-radius:7px;border:1px solid var(--bdr);background:transparent;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--muted);white-space:nowrap}
+.bnav-b.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center;padding:.875rem}
+.modal.on{display:flex}
+.modal-c{background:var(--card);border-radius:18px;padding:1.5rem;width:100%;max-width:440px;max-height:80vh;overflow-y:auto}
+.modal-c h2{font-size:16px;font-weight:700;margin-bottom:.875rem}
+.close-x{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-top:-4px}
+.et{width:100%;border-collapse:collapse}
+.et th{text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:5px 0;border-bottom:1px solid var(--bdr)}
+.et td{padding:7px 0;border-bottom:1px solid var(--bdr);font-size:12px}
+.et td:last-child{text-align:right}
+.lg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1.25rem}
+.lg-card{background:var(--card);border:2px solid var(--bdr);border-radius:11px;padding:.75rem 1rem;cursor:pointer;transition:all .14s}
+.lg-card:hover{border-color:var(--blue)}
+.lg-card.sel{border-color:var(--green);background:var(--gbg)}
+.lg-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.lg-nat{font-size:11px;color:var(--muted)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--accent);color:#fff;padding:8px 16px;border-radius:99px;font-size:13px;z-index:99999;transition:transform .3s;white-space:nowrap;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.ch-wr{position:relative;height:210px;margin:.4rem 0 .875rem}
+.info-box{background:var(--bbg);border:1px solid #b5d4f4;border-radius:9px;padding:.75rem 1rem;margin-bottom:.875rem;font-size:12px;color:var(--btxt);line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="screen active">
+ <div class="body" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem">
+  <div class="card" style="width:100%;max-width:400px">
+   <div style="text-align:center;margin-bottom:1.125rem">
+    <div style="font-size:34px">🏗️</div>
+    <div style="font-size:18px;font-weight:700;margin-top:.4rem">建設機械 Exam</div>
+    
+   </div>
+   <div style="display:flex;justify-content:center;gap:6px;margin-bottom:.875rem;flex-wrap:wrap" id="ui-lang-bar">
+    <button onclick="setUILang('ja')" id="ul-ja" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🇯🇵 日本語</button>
+    <button onclick="setUILang('en')" id="ul-en" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit">🇬🇧 English</button>
+    <button onclick="setUILang('si')" id="ul-si" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Sinhala',sans-serif">🇱🇰 සිංහල</button>
+    <button onclick="setUILang('my')" id="ul-my" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Myanmar',sans-serif">🇲🇲 မြန်မာ</button>
+    <button onclick="setUILang('vi')" id="ul-vi" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit">🇻🇳 Việt</button>
+    <button onclick="setUILang('id')" id="ul-id" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit">🇮🇩 Indonesia</button>
+    <button onclick="setUILang('tl')" id="ul-tl" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit">🇵🇭 Filipino</button>
+    <button onclick="setUILang('th')" id="ul-th" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Thai',sans-serif">🇹🇭 ไทย</button>
+    <button onclick="setUILang('km')" id="ul-km" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Khmer',sans-serif">🇰🇭 ខ្មែរ</button>
+    <button onclick="setUILang('hi')" id="ul-hi" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif">🇮🇳 हिन्दी</button>
+    <button onclick="setUILang('ne')" id="ul-ne" style="padding:4px 10px;border-radius:99px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif">🇳🇵 नेपाली</button>
+   </div>
+   <div class="tabs">
+    <button class="tab active" onclick="authTab('s')">🎓 Student</button>
+    <button class="tab" onclick="authTab('t')">👨‍🏫 Teacher</button>
+   </div>
+   <div id="auth-err" class="err"></div>
+
+   <!-- STUDENT FORM -->
+   <div id="sf">
+    <div class="fg"><label>🏢 Company Name</label><input type="text" id="s-co" placeholder="e.g. ABC Construction"></div>
+    <div class="fg"><label>Name</label><input type="text" id="s-nm" placeholder="Your name / お名前"></div>
+    <div class="fg"><label>Email</label><input type="email" id="s-em" placeholder="student@email.com"></div>
+    <button class="btn" onclick="sLogin()">📝 Start Exam</button>
+    <button class="btn bl" style="margin-top:7px" onclick="sStudy()">📚 Study Mode</button>
+    
+   </div>
+
+   <!-- TEACHER FORM -->
+   <div id="tf" style="display:none">
+    <div class="fg"><label>🏢 Company Name</label><input type="text" id="t-co" placeholder="e.g. ABC Construction"></div>
+    <div class="fg"><label>Teacher Password</label><input type="password" id="t-pw" placeholder="••••••••" onkeyup="if(event.key==='Enter')tLogin()"></div>
+    <button class="btn" onclick="tLogin()">ගුරු Dashboard</button>
+    <div class="info-box" style="margin-top:.875rem">
+     <strong>First time?</strong> Default password: <code>teacher2024</code><br>
+     Company name must exactly match what students enter.
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- EXAM SCREEN -->
+<div id="exam-screen" class="screen">
+ <div class="hdr">
+  <div class="hdr-t">建設機械施工基礎級</div>
+  <div class="hdr-s" id="exam-title">Exam</div>
+  <div class="hdr-co" id="exam-co"></div>
+  <div class="prg-row"><div class="prg-trk"><div class="prg-fill" id="prg" style="width:0%"></div></div><div class="prg-lbl" id="prg-l">0/0</div></div>
+ </div>
+ <div class="body" id="q-con"></div>
+ <div class="body sc-scr" id="sc-scr">
+  <div class="sc-ring">
+   <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#E0DDD6" stroke-width="8"/><circle id="sc-arc" cx="50" cy="50" r="42" fill="none" stroke="#1D9E75" stroke-width="8" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264"/></svg>
+   <div class="sc-ring-t"><span class="sc-n" id="sc-n">0</span><span class="sc-d" id="sc-d">/0</span></div>
+  </div>
+  <div style="font-size:18px;font-weight:700;margin-bottom:.4rem" id="sc-msg"></div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:1.25rem" id="sc-pct"></div>
+  <button class="btn" style="max-width:240px;margin:0 auto" onclick="retryExam()">නැවත / Try Again</button>
+  <br><button class="sbtn" style="margin-top:10px" onclick="ss('auth-screen')">← Home</button>
+ </div>
+</div>
+
+<!-- STUDY SCREEN -->
+<div id="study-screen" class="screen">
+ <div class="hdr">
+  <div class="hdr-t">STUDY MODE · 学習モード</div>
+  <div class="hdr-s">📚 Study</div>
+  <div class="hdr-co" id="study-co"></div>
+ </div>
+ <div class="body" id="study-body">
+  <div id="sh-panel">
+   <div class="co-badge" id="study-co-badge"></div>
+   <div style="display:grid;gap:9px;margin-bottom:1.25rem">
+    <div class="card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:.875rem 1rem" onclick="startFC('all')">
+     <div style="width:40px;height:40px;border-radius:10px;background:var(--bbg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🃏</div>
+     <div><div style="font-size:14px;font-weight:600;margin-bottom:2px">Flash Cards — All Questions</div><div style="font-size:11px;color:var(--muted)">Tap → answer reveal · 40 questions</div></div>
+    </div>
+    <div class="card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:.875rem 1rem" onclick="startFC('review')">
+     <div style="width:40px;height:40px;border-radius:10px;background:var(--abg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🔁</div>
+     <div><div style="font-size:14px;font-weight:600;margin-bottom:2px">Flash Cards — Review Only</div><div style="font-size:11px;color:var(--muted)">Review marked questions</div></div>
+    </div>
+    <div class="card" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:.875rem 1rem" onclick="showVocab()">
+     <div style="width:40px;height:40px;border-radius:10px;background:var(--gbg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
+     <div><div style="font-size:14px;font-weight:600;margin-bottom:2px">Reference List</div><div style="font-size:11px;color:var(--muted)">All questions + answers</div></div>
+    </div>
+   </div>
+   <div class="card">
+    <div class="lbl">Language / 言語</div>
+    <div class="lg-grid" id="lg-grid"></div>
+   </div>
+   <div class="card" style="margin-top:.75rem"><div class="lbl">Flash Card Progress</div><div id="fc-prog-info" style="font-size:12px;color:var(--muted)">No flash cards played yet</div></div>
+  </div>
+  <div id="fc-panel" style="display:none">
+   <div class="fc-pb"><div class="fc-pf" id="fc-pf" style="width:0%"></div></div>
+   <div class="fc-cnt" id="fc-cnt">1 / 40</div>
+   <div class="fc-card" id="fc-card" onclick="flipFC()">
+    <div class="fc-front">
+     <div class="fc-ja" id="fc-ja"></div>
+     <div class="fc-hira" id="fc-hira"></div>
+     <div class="fc-roma" id="fc-roma"></div>
+     <div class="fc-tr" id="fc-tr"></div>
+     <div class="fc-hint">👆 tap → answer reveal</div>
+    </div>
+    <div class="fc-back">
+     <div class="fc-ja" id="fc-ja-b" style="margin-bottom:.4rem"></div>
+     <div class="fc-ans-rev">
+      <div class="fc-badge" id="fc-badge"></div>
+      <div class="fc-sub" id="fc-sub"></div>
+      <div class="fc-tr" id="fc-tr-b" style="margin-top:.4rem"></div>
+     </div>
+    </div>
+   </div>
+   <div id="fc-act-btns" style="display:none">
+    <div class="fc-btns">
+     <button class="fc-btn rv" onclick="fcMark('review')">🔁 Review</button>
+     <button class="fc-btn fl" onclick="flipFC()">↩️ Flip</button>
+     <button class="fc-btn kn" onclick="fcMark('know')">✓ Know</button>
+    </div>
+   </div>
+   <div id="fc-done" class="fc-done" style="display:none">
+    <div style="font-size:44px;margin-bottom:.4rem">🎉</div>
+    <div style="font-size:19px;font-weight:700;margin-bottom:.4rem">Complete! / 完了！</div>
+    <div class="fc-stat-r">
+     <div class="fc-stat-b"><div class="fc-stat-n g" id="fc-kn">0</div><div class="fc-stat-l">දනිමි</div></div>
+     <div class="fc-stat-b"><div class="fc-stat-n a" id="fc-rv">0</div><div class="fc-stat-l">Review</div></div>
+    </div>
+    <button class="btn" style="margin-bottom:7px" onclick="startFC('review')">🔁 Review Cards</button>
+    <button class="btn bl" onclick="startFC('all')">↺ All Again</button>
+    <br><button class="sbtn" style="margin-top:9px" onclick="showStudyHome()">← Back</button>
+   </div>
+  </div>
+  <div id="vocab-panel" style="display:none">
+   <input type="text" class="v-srch" placeholder="🔍 Search..." oninput="filterVocab(this.value)">
+   <div id="vocab-items"></div>
+  </div>
+ </div>
+ <div class="bnav">
+  <button class="bnav-b" onclick="showStudyHome()">🏠 Home</button>
+  <button class="bnav-b" onclick="startFC('all')">🃏 Cards</button>
+  <button class="bnav-b" onclick="showVocab()">📋 List</button>
+  <button class="bnav-b" onclick="ss('auth-screen')">← Back</button>
+ </div>
+</div>
+
+<!-- TEACHER SCREEN -->
+<div id="teacher-screen" class="screen">
+ <div class="hdr">
+  <div class="hdr-t">TEACHER DASHBOARD</div>
+  <div class="hdr-s">Control Panel</div>
+  <div class="hdr-co" id="t-co-display"></div>
+  <div class="hdr-act">
+   <button class="hbtn" onclick="openOwner()">📋 Emails</button>
+   <button class="hbtn" onclick="tLogout()">← Out</button>
+  </div>
+ </div>
+ <div class="t-nav">
+  <button class="t-tab active" onclick="tTab('ov')">📊 Overview</button>
+  <button class="t-tab" onclick="tTab('st')">👥 Students</button>
+  <button class="t-tab" onclick="tTab('ch')">📈 Charts</button>
+  <button class="t-tab" onclick="tTab('sh')">🔗 Share</button>
+  <button class="t-tab" onclick="tTab('se')">⚙️ Settings</button>
+ </div>
+ <div class="body" style="padding-top:.875rem">
+  <div class="t-panel active" id="p-ov">
+   <div class="stat-g">
+    <div class="stat"><div class="stat-n b" id="ov-tot">0</div><div class="stat-l">Students</div></div>
+    <div class="stat"><div class="stat-n g" id="ov-pas">0</div><div class="stat-l">Pass</div></div>
+    <div class="stat"><div class="stat-n r" id="ov-fai">0</div><div class="stat-l">Fail</div></div>
+   </div>
+   <div class="stat-g">
+    <div class="stat"><div class="stat-n" id="ov-avg">-</div><div class="stat-l">Average</div></div>
+    <div class="stat"><div class="stat-n g" id="ov-hi">-</div><div class="stat-l">Highest</div></div>
+    <div class="stat"><div class="stat-n r" id="ov-lo">-</div><div class="stat-l">Lowest</div></div>
+   </div>
+   <div class="card"><div class="lbl">Recent Students</div><div id="rec-list"><p style="color:var(--muted);font-size:12px">No students yet</p></div></div>
+  </div>
+  <div class="t-panel" id="p-st">
+   <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+     <div class="lbl" style="margin-bottom:0">All Students</div>
+     <button class="sbtn rd" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+    <div id="all-st"><p style="color:var(--muted);font-size:12px">No students yet</p></div>
+   </div>
+  </div>
+  <div class="t-panel" id="p-ch">
+   <div class="card"><div class="lbl">Score Distribution</div><div class="ch-wr"><canvas id="dc"></canvas></div></div>
+   <div class="card">
+    <div class="lbl">Student Progress</div>
+    <select id="st-sel" style="padding:6px 10px;border-radius:7px;border:1px solid var(--bdr);background:var(--bg);font-family:inherit;font-size:12px;outline:none;margin-bottom:8px;width:100%" onchange="renderSChart()"><option value="">-- Select student --</option></select>
+    <div class="ch-wr"><canvas id="sc2"></canvas></div>
+   </div>
+  </div>
+  <div class="t-panel" id="p-sh">
+   <div class="card">
+    <div class="lbl">Share Link</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:.875rem">
+     Share this link with students. They must enter the exact same company name.
+    </p>
+    <div class="info-box">
+     <strong>Student Link:</strong><br>
+     <span id="sh-url" style="font-family:'DM Mono',monospace;font-size:11px;word-break:break-all"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
+     <button class="sbtn bl" onclick="cpLink()">📋 Copy Link</button>
+     <button class="sbtn bl" onclick="shareEmail()">📧 Send Email</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+     <button class="sbtn bl" onclick="shareWA()">💬 WhatsApp</button>
+     <button class="sbtn bl" onclick="shareTG()">✈️ Telegram</button>
+    </div>
+   </div>
+  </div>
+  <div class="t-panel" id="p-se">
+   <div class="card">
+    <div class="lbl">Security</div>
+    <div class="set-row">
+     <div><div class="set-l">Teacher Password</div><div class="set-s">This company only</div></div>
+     <div style="display:flex;gap:5px"><input type="password" id="np" class="sinput" placeholder="New password" style="width:120px"><button class="sbtn gr" onclick="chgPw()">Save</button></div>
+    </div>
+   </div>
+   <div class="card">
+    <div class="lbl">Exam Settings</div>
+    <div class="set-row">
+     <div><div class="set-l">Questions per exam</div><div class="set-s">Max 40</div></div>
+     <div style="display:flex;gap:5px;align-items:center"><input type="number" id="qc" class="sinput" min="5" max="40" value="20" style="width:65px"><button class="sbtn gr" onclick="saveQC()">Save</button></div>
+    </div>
+    <div class="set-row">
+     <div><div class="set-l">Pass Mark %</div><div class="set-s">Default: 70</div></div>
+     <div style="display:flex;gap:5px;align-items:center"><input type="number" id="pm" class="sinput" min="1" max="100" value="70" style="width:65px"><button class="sbtn gr" onclick="savePM()">Save</button></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- OWNER MODAL -->
+<div class="modal" id="own-modal">
+ <div class="modal-c">
+  <button class="close-x" onclick="closeOwner()">✕</button>
+  <div id="own-modal-h2" style="font-size:16px;font-weight:700;margin-bottom:.875rem"></div>
+  <p style="font-size:11px;color:var(--muted);margin-bottom:.875rem">Email list — teacher only</p>
+  <table class="et"><thead><tr><th>Name</th><th>Email</th><th>Score</th></tr></thead><tbody id="own-list"></tbody></table>
+  <div style="margin-top:.875rem;display:flex;gap:7px">
+   <button class="sbtn bl" onclick="expCSV()">⬇️ CSV</button>
+   <button class="sbtn" onclick="closeOwner()">Close</button>
+  </div>
+ </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LANGS=[
+ {k:'ja',name:'日本語',nat:'Japanese'},
+ {k:'en',name:'English',nat:'English'},
+ {k:'si',name:'සිංහල',nat:'Sinhala'},
+ {k:'my',name:'မြန်မာ',nat:'Myanmar'},
+ {k:'vi',name:'Tiếng Việt',nat:'Vietnamese'},
+ {k:'id',name:'Indonesia',nat:'Indonesian'},
+ {k:'tl',name:'Filipino',nat:'Tagalog'},
+ {k:'th',name:'ไทย',nat:'Thai'},
+ {k:'km',name:'ខ្មែរ',nat:'Khmer'},
+];
+
+const Q=[
+{id:1,ja:"機械は使い方を誤ると事故や災害を起こす危険性が高いです",hira:"きかいは つかいかたを あやまると じこや さいがいを おこす きけんせいが たかいです",roma:"KIKAI WA TSUKAIKATA WO AYAMARU TO JIKO YA SAIGAI WO OKOSU KIKENSEI GA TAKAI DESU",answer:true,en:"Incorrect use of machinery creates a high risk of accidents.",si:"යන්ත්‍ර වැරදිලෙස භාවිත කළහොත් අනතුරු ඇති කිරීමේ ඉහළ අවදානමක් ඇත.",my:"စက်ကို မှားကိုင်တွယ်ပါက မတော်တဆမှု ဖြစ်နိုင်ချေ မြင့်သည်။",vi:"Sử dụng máy sai tạo nguy cơ cao về tai nạn.",id:"Penggunaan mesin yang salah berisiko tinggi menyebabkan kecelakaan.",tl:"Ang maling paggamit ng makinarya ay nagdudulot ng mataas na panganib.",th:"การใช้เครื่องจักรผิดวิธีมีความเสี่ยงสูงของอุบัติเหตุ",km:"ការប្រើម៉ាស៊ីនខុសវិធីបង្កហានិភ័យខ្ពស់នៃគ្រោះថ្នាក់។"},
+{id:2,ja:"作業服は、仕事のし易いもので、災害から身を守るものです",hira:"さぎょうふくは しごとの しやすいもので さいがいから みを まもるものです",roma:"SAGYOUFUKU WA SHIGOTO NO SHIYASUIMONODE SAIGAI KARA MI WO MAMORU MONODESU",answer:true,en:"Work clothes protect you from disasters.",si:"වැඩ ඇඳුම් ආරක්ෂාව සඳහා නිර්මාණය කෙරේ.",my:"လုပ်ငန်းဝတ်စုံသည် ဘေးအန္တရာယ်မှ ကာကွယ်သည်။",vi:"Quần áo bảo hộ bảo vệ bạn khỏi tai nạn.",id:"Pakaian kerja melindungi dari bencana.",tl:"Ang damit pangtrabaho ay nagpoprotekta mula sa sakuna.",th:"ชุดทำงานป้องกันภัย",km:"សម្លៀកបំពាក់ការងារការពារពីគ្រោះថ្នាក់។"},
+{id:3,ja:"機械を運転する時は、ヘルメットや安全用具を着けます",hira:"きかいを うんてんするときは ヘルメットや あんぜんようぐを つけます",roma:"KIKAI WO UNTEN SURUTOKI WA HERUMETTO YA ANZEN YOUGU WO TSUKEMASU",answer:true,en:"When operating machinery, wear a helmet and safety equipment.",si:"යන්ත්‍ර ක්‍රියාත්මක කරන විට, හිස්වැස්ම සහ ආරක්ෂක උපකරණ පළඳින්න.",my:"စက်မောင်းသောအခါ ဦးထုပ်နှင့် ဘေးကင်းရေးပစ္စည်း တပ်ဆင်ပါ။",vi:"Khi vận hành máy, đội mũ và đồ bảo hộ.",id:"Saat mengoperasikan mesin, pakai helm dan perlengkapan keselamatan.",tl:"Sa pagpapatakbo ng makinarya, magsuot ng helmet at kagamitang pangkaligtasan.",th:"เมื่อขับเครื่องจักร สวมหมวกนิรภัยและอุปกรณ์ความปลอดภัย",km:"ពេលបើកបរម៉ាស៊ីន ពាក់មួកនិងឧបករណ៍ការពារ។"},
+{id:4,ja:"破れた作業服は、機械の誤操作を起こす原因となります",hira:"やぶれた さぎょうふくは きかいの ごそうさを おこす げんいんと なります",roma:"YABURETA SAGYOUFUKU WA KIKAI NO GOSOSA WO OKOSU GEN'IN TO NARIMASU",answer:true,en:"Torn work clothes can cause machine malfunctions.",si:"ඉරුණු වැඩ ඇඳුම් යන්ත්‍ර දෝෂ ඇති කළ හැකිය.",my:"ဆုတ်ကျဲသော ဝတ်စုံသည် စက်ချွတ်ယွင်းခြင်း ဖြစ်စေနိုင်သည်။",vi:"Quần áo rách gây ra sự cố máy.",id:"Pakaian robek dapat menyebabkan kerusakan mesin.",tl:"Ang punit na damit ay maaaring maging sanhi ng pagkasira ng makinarya.",th:"ชุดทำงานที่ขาดอาจทำให้เครื่องจักรผิดพลาด",km:"សម្លៀកបំពាក់ហែកអាចបណ្តាលឱ្យម៉ាស៊ីនខូច។"},
+{id:5,ja:"仕事で機械を運転するには資格が必要です",hira:"しごとで きかいを うんてんするには しかくが ひつようです",roma:"SHIGOTO DE KIKAI WO UNTEN SURUNIWA SHIKAKU GA HITSUYO DESU",answer:true,en:"A license is required to operate machinery for work.",si:"වැඩ සඳහා යන්ත්‍ර ක්‍රියාත්මක කිරීමට බලපත්‍රයක් අවශ්‍ය.",my:"အလုပ်တွင် စက်မောင်းရန် လိုင်စင်လိုအပ်သည်။",vi:"Cần giấy phép để vận hành máy.",id:"Diperlukan lisensi untuk mengoperasikan mesin.",tl:"Kailangan ng lisensya para sa pagpapatakbo ng makinarya.",th:"ต้องมีใบอนุญาตในการขับเครื่องจักร",km:"ត្រូវការប័ណ្ណអនុញ្ញាតដើម្បីបើកបរម៉ាស៊ីន។"},
+{id:6,ja:"仕事で機械を運転するには資格が必要ありません",hira:"しごとで きかいを うんてんするには しかくが ひつよう ありません",roma:"SHIGOTO DE KIKAI WO UNTEN SURUNIWA SHIKAKU GA HITSUYO ARIMASEN",answer:false,en:"No license is required to operate machinery for work.",si:"වැඩ සඳහා යන්ත්‍ර ක්‍රියාත්මක කිරීමට බලපත්‍රයක් අවශ්‍ය නොවේ.",my:"အလုပ်တွင် စက်မောင်းရန် လိုင်စင်မလိုအပ်ပါ။",vi:"Không cần giấy phép để vận hành máy.",id:"Tidak diperlukan lisensi untuk mengoperasikan mesin.",tl:"Hindi kailangan ng lisensya para sa pagpapatakbo ng makinarya.",th:"ไม่ต้องมีใบอนุญาตในการขับเครื่องจักร",km:"មិនចាំបាច់ប័ណ្ណអនុញ្ញាតដើម្បីបើកបរម៉ាស៊ីនទេ។"},
+{id:7,ja:"機械に乗る前に周囲の安全を確認します",hira:"きかいに のるまえに しゅういの あんぜんを かくにんします",roma:"KIKAI NI NORU MAENI SHUUI NO ANZEN WO KAKUNIN SHIMASU",answer:true,en:"Before boarding the machine, check safety of surrounding area.",si:"යන්ත්‍රයට නැගීමට පෙර, අවට ප්‍රදේශය පරීක්ෂා කරන්න.",my:"စက်စီးတက်မတိုင်မီ ပတ်ဝန်းကျင်ဘေးကင်းမှုကို စစ်ဆေးပါ။",vi:"Trước khi lên máy, kiểm tra khu vực xung quanh.",id:"Sebelum naik mesin, periksa area sekitar.",tl:"Bago sumakay sa makinarya, suriin ang nakapaligid.",th:"ก่อนขึ้นเครื่องจักร ตรวจสอบพื้นที่โดยรอบ",km:"មុនឡើងម៉ាស៊ីន ត្រូតពិនិត្យតំបន់ជុំវិញ។"},
+{id:8,ja:"運転席から離れる時は、エンジンを切ります",hira:"うんてんせきから はなれるときは エンジンを きります",roma:"UNTEN SEKI KARA HANARERU TOKIWA ENJIN WO KIRIMASU",answer:true,en:"When leaving the driver's seat, turn off the engine.",si:"රියදුරු අසුනෙන් ඉවත් වන විට එන්ජිම නිවා දමන්න.",my:"ယာဉ်မောင်းနေရာမှ ထွက်သောအခါ အင်ဂျင်ပိတ်ပါ။",vi:"Khi rời ghế lái, tắt động cơ.",id:"Saat meninggalkan kursi pengemudi, matikan mesin.",tl:"Kapag umalis sa upuan ng driver, patayin ang makina.",th:"เมื่อออกจากที่นั่งคนขับ ปิดเครื่องยนต์",km:"ពេលចាកចេញពីកៅអីបើកបរ បិទម៉ាស៊ីន។"},
+{id:9,ja:"運転席から離れる時は、エンジンを切る必要はありません",hira:"うんてんせきから はなれるときは エンジンを きる ひつようはありません",roma:"UNTEN SEKI KARA HANARERU TOKIWA ENJIN WO KIRU HITSUYOU WA ARIMASEN",answer:false,en:"When leaving the driver's seat, it is not necessary to turn off the engine.",si:"රියදුරු අසුනෙන් ඉවත් වන විට එන්ජිම නිවා දැමීම අවශ්‍ය නොවේ.",my:"ယာဉ်မောင်းနေရာမှ ထွက်သောအခါ အင်ဂျင်ပိတ်ရန် မလိုအပ်ပါ။",vi:"Khi rời ghế lái, không cần tắt động cơ.",id:"Saat meninggalkan kursi pengemudi, tidak perlu mematikan mesin.",tl:"Hindi kailangang patayin ang makina kapag umalis sa upuan ng driver.",th:"เมื่อออกจากที่นั่งคนขับ ไม่จำเป็นต้องปิดเครื่องยนต์",km:"ពេលចាកចេញពីកៅអីបើកបរ មិនចាំបាច់បិទម៉ាស៊ីនទេ។"},
+{id:10,ja:"ブルドーザは、トラクタにブレード（排土板）を取り付けた機械です",hira:"ブルドーザは トラクタに ブレード（はいどばん）を とりつけた きかいです",roma:"BURUDO-ZA WA TORAKUTA NI BURE-DO (HAIDOBAN) WO TORITSUKETA KIKAI DESU",answer:true,en:"A bulldozer is a machine with a blade attached to a tractor.",si:"බුල්ඩෝසරයක් යනු ට්‍රැක්ටරයකට තලයක් සවි කර ඇති යන්ත්‍රයකි.",my:"ဘူဒိုဇာသည် ထရက်တာပေါ်တွင် ဘလိတ်တပ်ဆင်ထားသောစက်ဖြစ်သည်။",vi:"Xe ủi là máy có lưỡi gắn vào máy kéo.",id:"Buldoser adalah mesin dengan bilah dipasang pada traktor.",tl:"Ang bulldozer ay makinarya na may blade na nakakabit sa tractor.",th:"รถปราบดินคือเครื่องจักรมีใบมีดติดรถแทรกเตอร์",km:"Bulldozer គឺជាម៉ាស៊ីនដែលមានស្លាបភ្ជាប់ tractor។"},
+{id:11,ja:"バックホウは、地面より下の土の掘削作業に使われます",hira:"バックホウは じめんより したの つちの くっさくさぎょうに つかわれます",roma:"BAKKUHO WA JIMEN YORI SHITA NO TSUCHI NO KUSSAKU SAGYO NI TSUKAWAREMASU",answer:true,en:"Backhoes are used for excavating soil below ground level.",si:"බෑකෝ යන්ත්‍ර බිම් මට්ටමට පහළින් පස් කැණීම සඳහා භාවිතා කෙරේ.",my:"ဘက်ခိုးကို မြေပြင်အောက် မြေတူးဆွသောလုပ်ငန်းများတွင် သုံးသည်။",vi:"Máy đào gầu ngược dùng đào đất dưới mặt đất.",id:"Backhoe digunakan untuk menggali tanah di bawah permukaan.",tl:"Ang backhoe ay ginagamit para sa pagkuha ng lupa sa ilalim ng lupa.",th:"แบ็คโฮใช้ขุดดินใต้ระดับพื้นดิน",km:"Backhoe ប្រើជីកដីក្រោមមាត់ដី។"},
+{id:12,ja:"バックホウは、地面より下の土の掘削に使われません",hira:"バックホウは じめんより したの つちの くっさくさぎょうに つかわれません",roma:"BAKKUHO WA JIMEN YORI SHITA NO TSUCHI NO KUSSAKU SAGYO NI TSUKAWAREMASEN",answer:false,en:"Backhoes are NOT used for excavating soil below ground level.",si:"බෑකෝ යන්ත්‍ර බිම් මට්ටමට පහළින් පස් කැණීම සඳහා භාවිතා නොකෙරේ.",my:"ဘက်ခိုးကို မြေပြင်အောက် မြေတූဆွသောလုပ်ငန်းများတွင် မသုံးပါ။",vi:"Máy đào gầu ngược KHÔNG dùng đào đất dưới mặt đất.",id:"Backhoe TIDAK digunakan untuk menggali tanah di bawah permukaan.",tl:"Ang backhoe ay HINDI ginagamit para sa pagkuha ng lupa sa ilalim.",th:"แบ็คโฮไม่ใช้ขุดดินใต้ระดับพื้นดิน",km:"Backhoe មិនប្រើជីកដីក្រោមមាត់ដីទេ។"},
+{id:13,ja:"エンジンを冷却する方式には、水冷式と空冷式があります",hira:"エンジンを れいきゃくする ほうしきには すいれいしきと くうれいしきが あります",roma:"ENJIN WO REIKYAKU SURU HOSHIKI NIWA SUIREISHIKI TO KUUREISHIKI GA ARIMASU",answer:true,en:"Engine cooling methods include water cooling and air cooling.",si:"එන්ජිම් සිසිල් කිරීමේ ක්‍රම: ජල සිසිලනය සහ වායු සිසිලනය.",my:"အင်ဂျင်ကို ချမ်းစေသောနည်းလမ်း: ရေချမ်းနှင့် လေချမ်း။",vi:"Phương pháp làm mát động cơ: làm mát nước và làm mát không khí.",id:"Metode pendinginan mesin: pendinginan air dan udara.",tl:"Mga paraan ng pagpapalamig: water cooling at air cooling.",th:"วิธีระบายความร้อนเครื่องยนต์: น้ำและอากาศ",km:"វិធីស្រោចទឹកម៉ាស៊ីន: ទឹក and ខ្យល់។"},
+{id:14,ja:"ディーゼルエンジンの燃料は軽油ではありません",hira:"ディーゼルエンジンの ねんりょうは けいゆ ではありません",roma:"DIZERU ENJIN NO NENRYO WA KEIYU DEWA ARIMASENN",answer:false,en:"Diesel engine fuel is NOT diesel oil.",si:"ඩීසල් එන්ජිනට ඉන්ධනය ඩීසල් ඉන්ධනය නොවේ.",my:"ဒီဇယ်အင်ဂျင်၏ ဆီမှာ ဒီဇယ်ဆီ မဟုတ်ပါ။",vi:"Nhiên liệu động cơ diesel KHÔNG phải dầu diesel.",id:"Bahan bakar mesin diesel BUKAN minyak diesel.",tl:"Ang gasolina ng diesel engine ay HINDI diesel oil.",th:"เชื้อเพลิงดีเซลไม่ใช่น้ำมันดีเซล",km:"ឥន្ធនៈម៉ាស៊ីន diesel មិនមែន diesel oil ទេ។"},
+{id:15,ja:"建設機械を安全に効率よく動かすために、整備は欠かせません",hira:"けんせつきかいを あんぜんに こうりつよく うごかすために せいびは かかせません",roma:"KENSETSU KIKAI WO ANZEN NI KORITSU YOKU UGOKASU TAMENI SEIBI GA KAKASEMASEN",answer:true,en:"Maintenance is essential for safe and efficient operation.",si:"ආරක්ෂිත ක්‍රියාකාරිත්වය සඳහා නඩත්තු කිරීම අත්‍යවශ්‍ය.",my:"ဘေးကင်းစွာ ထိထိရောက်ရောက် ထည့်သွင်းနိုင်ရန် ပြုပြင်ထိန်းသိမ်းမှု မရှိမဖြစ်လိုအပ်သည်။",vi:"Bảo dưỡng thiết yếu cho vận hành an toàn và hiệu quả.",id:"Perawatan penting untuk operasi aman dan efisien.",tl:"Ang pagpapanatili ay mahalaga para sa ligtas na pagpapatakbo.",th:"การบำรุงรักษาจำเป็นสำหรับการใช้งานอย่างปลอดภัย",km:"ការថែទាំចាំបាច់ដើម្បីដំណើរការដោយសុវត្ថិភាព។"},
+{id:16,ja:"点検の時、ブレーキや安全ロックを掛ける必要はありません",hira:"てんけんの とき ブレーキや あんぜんロックを かけるひつようはありません",roma:"TENKEN NO TOKI BURE-KI YA ANZEN ROKKU WO KAKERUHITSUYOUHA ARIMASENN",answer:false,en:"It is NOT necessary to apply brakes or safety locks during inspection.",si:"පරීක්ෂාව අතරතුර තිරිිංග හෝ ආරක්ෂිත අගුල් යෙදීමට අවශ්‍ය නොවේ.",my:"စစ်ဆေးနေစဉ် ဘရိတ်နှင့် ဘေးကင်းရေးသော့ကို အသုံးပြုရန် မလိုအပ်ပါ။",vi:"KHÔNG cần phanh hoặc khóa an toàn khi kiểm tra.",id:"TIDAK perlu rem atau kunci keselamatan saat inspeksi.",tl:"Hindi KINAKAILANGAN ang preno o safety lock sa inspeksyon.",th:"ไม่จำเป็นต้องใช้เบรกหรือล็อคนิรภัยระหว่างตรวจสอบ",km:"មិនចាំបាច់ ហ្ស្រ័ន ឬ safety lock ក្នុងការត្រួតពិនិត្យ។"},
+{id:17,ja:"作業開始前には、機械を一回りして各部分をよく点検します",hira:"さぎょうかいしまえには きかいを ひとまわりして かくぶぶんを よく てんけんします",roma:"SAGYO KAISHI MAE NIWA KIKAI WO HITOMAWARI SHITE KAKUBUBUN WO YOKU TENKEN SHIMASU",answer:true,en:"Before starting work, walk around and inspect the machine thoroughly.",si:"වැඩ ආරම්භ කිරීමට පෙර, යන්ත්‍රය වටා ඇවිද සෑම කොටසක්ම පරීක්ෂා කරන්න.",my:"အလုပ်မစတင်မီ စက်ကို ပတ်ဝန်းကျင် လှည့်ပတ်ပြီး စစ်ဆေးပါ။",vi:"Trước khi làm việc, đi vòng quanh và kiểm tra máy.",id:"Sebelum bekerja, kelilingi dan periksa mesin.",tl:"Bago magtrabaho, lumakad sa paligid at siyasatin ang makinarya.",th:"ก่อนเริ่มงาน เดินรอบและตรวจสอบเครื่องจักร",km:"មុនចាប់ផ្តើម ដើរជុំវិញនិងត្រួតពិនិត្យម៉ាស៊ីន។"},
+{id:18,ja:"たばこを吸いながら機械に燃料を補給しても良いです",hira:"たばこを すいながら きかいに ねんりょうを ほきゅうしても よいです",roma:"TABAKO WO SUINAGARA KIKAI NI NENRYO WO HOKYU SHITE MO YOIDESU",answer:false,en:"It is OK to refuel the machine while smoking.",si:"සිගරට් බොන අතරතුර යන්ත්‍රයට ඉන්ධන පිරවිය හැකිය.",my:"ဆေးလိပ်သောက်နေစဉ် စက်ကို ဆီဖြည့်သောကောင်းသည်။",vi:"Được phép đổ nhiên liệu khi hút thuốc.",id:"Boleh mengisi bahan bakar sambil merokok.",tl:"Okay lang lagyan ng gasolina habang naninigarilyo.",th:"ได้รับอนุญาตเติมน้ำมันขณะสูบบุหรี่",km:"អាចផ្តល់ប្រេងខណៈពេលជក់បារី។"},
+{id:19,ja:"エンジン始動後の点検はエンジン、ブレーキ、クラッチ等について点検します",hira:"エンジンしどうごの てんけんは エンジン ブレーキ クラッチなどについて てんけんします",roma:"ENJIN SHIDOGO NO TENKEN WA ENJIN BURE-KI KURATCHI NADONI TSUITE TENKEN SHIMASU",answer:true,en:"Post-start inspection includes engine, brakes, clutch, etc.",si:"ආරම්භයෙන් පසු පරීක්ෂාවට එන්ජිම, තිරිිංග, ක්ලච් ඇතුළත් වේ.",my:"ဖွင့်ပြီးနောက် စစ်ဆေးမှုတွင် အင်ဂျင်၊ ဘရိတ်၊ ကလပ် စစ်ဆေးခြင်း ပါဝင်သည်။",vi:"Kiểm tra sau khởi động: động cơ, phanh, côn.",id:"Inspeksi setelah start: mesin, rem, kopling.",tl:"Inspeksyon pagkatapos ng simula: makina, preno, clutch.",th:"ตรวจสอบหลังสตาร์ท: เครื่องยนต์ เบรก คลัตช์",km:"ការត្រួតពិនិត្យក្រោយចាប់ផ្តើម: ម៉ាស៊ីន ហ្ស្រ័ន ក្លាច់។"},
+{id:20,ja:"機械の整備方法が判らないと故障することが多くなります",hira:"きかいの せいびほうほうが わからないと こしょうすることが おおくなります",roma:"KIKAI NO SEIBI HOHO GA WAKARANAITO KOSYO SURUKOTO GA OOKU NARIMASU",answer:true,en:"Not knowing how to maintain the machine causes frequent breakdowns.",si:"යන්ත්‍රය නඩත්තු කරන්නේ කෙසේදැයි නොදන්නේ නම්, එය බොහෝ විට කැඩෙයි.",my:"စက်ကို မည်သို့ ထိန်းသိမ်းရမည်ကို မသိပါက မကြာခဏ ပျက်ယွင်းတတ်သည်။",vi:"Không biết bảo dưỡng máy gây hỏng thường xuyên.",id:"Tidak tahu cara merawat mesin menyebabkan sering rusak.",tl:"Hindi alam ang pagpapanatili ng makinarya ay nagdudulot ng madalas na pagkasira.",th:"ไม่รู้วิธีบำรุงรักษาทำให้เสียบ่อย",km:"មិនដឹងថែទាំម៉ាស៊ីន វានឹងខូចជាញឹកញាប់។"},
+{id:21,ja:"急発進、急ブレーキなどの乱暴な運転をしても良いです",hira:"きゅうはっしん きゅうブレーキなどの らんぼうな うんてんを しても よいです",roma:"KYU HASSHIN KYU BURE-KI NADONO RANBO NA UNTEN WO SHITEMO YOIDESU",answer:false,en:"Reckless driving such as sudden acceleration or braking is OK.",si:"හදිසි ත්වරණය හෝ තිරිිංග වැනි නොසැලකිලිමත් රිය පැදීම කමක් නැත.",my:"ရုတ်တရက် အရှိန်မြှင့်ခြင်းကဲ့သို့ မမှန်ကန်သောနည်းဖြင့် မောင်းနှင်ကောင်းသည်။",vi:"Lái xe liều lĩnh như tăng tốc đột ngột là OK.",id:"Mengemudi ceroboh seperti akselerasi mendadak tidak apa-apa.",tl:"Ang pabaya na pagmamaneho tulad ng biglaang pagbilis ay OK.",th:"การขับรถประมาทเช่นเร่งความเร็วอย่างรวดเร็วเป็นเรื่องปกติ",km:"ការបើកបរប្រញ្ញ៉ប់ដូចជាបង្កើនល្បឿនភ្លាមៗ គឺ OK។"},
+{id:22,ja:"毎日運転している機械でも、毎日点検する必要はありません",hira:"まいにち うんてんしている きかいでも まいにち てんけんする ひつようは ありません",roma:"MAINICHI UNTEN SHITEIRU KIKAI DEMO MAINICHI TENKEN SURU HITSUYO HA ARIMASEN",answer:false,en:"Machines operated daily do NOT need daily inspection.",si:"දිනපතා ධාවනය කරන යන්ත්‍ර දිනපතා පරීක්ෂා කිරීමට අවශ්‍ය නොවේ.",my:"နေ့တိုင်းမောင်းနှင်သော စက်များ နေ့တိုင်း စစ်ဆေးရန် မလိုအပ်ပါ။",vi:"Máy vận hành hàng ngày KHÔNG cần kiểm tra hàng ngày.",id:"Mesin yang dioperasikan setiap hari TIDAK perlu pemeriksaan harian.",tl:"Ang makinaryang ginagamit araw-araw ay HINDI kailangan ng araw-araw na inspeksyon.",th:"เครื่องจักรที่ใช้ทุกวันไม่ต้องตรวจทุกวัน",km:"ម៉ាស៊ីនប្រើប្រាស់រាល់ថ្ងៃ មិនចាំបាច់ត្រួតពិនិត្យរាល់ថ្ងៃ។"},
+{id:23,ja:"異常なところはすぐに点検し、修理をしてから運転します",hira:"いじょうな ところは すぐに てんけんし しゅうりを してから うんてんします",roma:"IJYO NA TOKORO WA SUGUNI TENKEN SHI SYURI WO SHITEKARA UNTEN SHIMASU",answer:true,en:"Inspect abnormal areas immediately and repair before driving.",si:"අසාමාන්‍ය ස්ථාන වහාම පරීක්ෂා කර, ධාවනය කිරීමට පෙර අලුත්වැඩියා කරන්න.",my:"ပုံမှန်မဟုတ်သောနေရာများကို ချက်ချင်းစစ်ဆေးပြီး ပြုပြင်ပါ။",vi:"Kiểm tra và sửa chữa ngay các điểm bất thường.",id:"Periksa dan perbaiki segera area yang tidak normal.",tl:"Agad suriin at ayusin ang mga abnormal na lugar.",th:"ตรวจสอบและซ่อมแซมพื้นที่ผิดปกติทันที",km:"ត្រួតពិនិត្យនិងជួសជុលតំបន់មិនធម្មតាភ្លាមៗ។"},
+{id:24,ja:"エンジン停止後は、鍵を抜き取り決められた場所に保管します",hira:"エンジンていしごは かぎを ぬきとり きめられたばしょに ほかんします",roma:"ENJIN TEISHI GO WA KAGI WO NUKITORI KIMERARETA BASYO NI HOKAN SHIMASU",answer:true,en:"After stopping the engine, remove the key and store in designated place.",si:"එන්ජිම නැවැත්වීමෙන් පසු, යතුර ඉවත් කර නියමිත ස්ථානයේ ගබඩා කරන්න.",my:"အင်ဂျင်ပိတ်ပြီးနောက် သော့ကို ထုတ်ယူ၍ သတ်မှတ်ထားသောနေရာတွင် သိမ်းဆည်းပါ။",vi:"Sau khi tắt máy, rút chìa khóa cất vào nơi quy định.",id:"Setelah mematikan mesin, cabut kunci dan simpan di tempat ditentukan.",tl:"Pagkatapos ihinto ang makina, tanggalin ang susi at iimbak.",th:"หลังดับเครื่อง ถอดกุญแจเก็บในที่กำหนด",km:"បន្ទាប់ពីបិទម៉ាស៊ីន ដោះកូនសោរដាក់នៅកន្លែងកំណត់។"},
+{id:25,ja:"バックホウをクレーン作業に使用してもよいです",hira:"バックホウを クレーンさぎょうに しようしてもよいです",roma:"BAKKUHO WO KURE-N SAGYO NI SHIYO SHITEWA YOIDESU",answer:false,en:"It is OK to use a backhoe for crane work.",si:"ක්‍රේන් වැඩ සඳහා බෑකෝ භාවිතා කළ හැකිය.",my:"ကရိန်းလုပ်ငန်းအတွက် ဘက်ခိုးကို သုံးကောင်းသည်။",vi:"OK khi dùng backhoe cho việc cần cẩu.",id:"Boleh menggunakan backhoe untuk pekerjaan crane.",tl:"OK gamitin ang backhoe para sa gawaing crane.",th:"ใช้แบ็คโฮสำหรับงานเครนได้",km:"អាចប្រើ backhoe សម្រាប់ការងារ crane។"},
+{id:26,ja:"建設機械は、その機械の主な用途以外に使用してはいけません",hira:"けんせつきかいは そのきかいの おもなようといがいに しようしては いけません",roma:"KENSETU KIKAI WA SONO KIKAI NO OMONA YOTO IGAI NI SHIYO SHITEWA IKEMASEN",answer:true,en:"Construction machinery must not be used for purposes other than its main use.",si:"ඉදිකිරීම් යන්ත්‍රෝපකරණ ප්‍රාථමික භාවිතය හැර වෙනත් අරමුණු සඳහා භාවිතා නොකළ යුතුය.",my:"ဆောက်လုပ်ရေးစက်ကိරိယာများကို ပင်မအသုံးပြုမှုမှ တပါး မသုံးပါနှင့်။",vi:"Máy xây dựng không được dùng ngoài mục đích chính.",id:"Mesin konstruksi tidak boleh digunakan selain tujuan utamanya.",tl:"Ang makinarya ay hindi dapat gamitin para sa ibang layunin.",th:"เครื่องจักรก่อสร้างต้องไม่ใช้นอกวัตถุประสงค์หลัก",km:"ម៉ាស៊ីនសំណង់មិនត្រូវប្រើសម្រាប់គោលបំណងផ្សេងទេ។"},
+{id:27,ja:"作業をするとき、運転席でないところに人を乗せてはいけません",hira:"さぎょうを するとき うんてんせきでない ところに ひとを のせては いけません",roma:"SAGYO WO SURUTOKI UNTENSEKI DE NAI TOKORO NI HITO WO NOSETEWA IKEMASEN",answer:true,en:"Do not allow people to ride anywhere other than the driver's seat.",si:"රියදුරු අසුන හැර වෙනත් කිසිවකුට වාඩි වීමට ඉඩ නොදෙන්න.",my:"ယာဉ်မောင်းနေရာမှ တပါးသော နေရာများတွင် လူများ စီးခွင့်မပြုပါနှင့်။",vi:"Không cho người ngồi ngoài ghế lái.",id:"Jangan biarkan orang menumpang selain kursi pengemudi.",tl:"Huwag payagan ang tao na sumakay maliban sa upuan ng driver.",th:"ห้ามให้ผู้อื่นนั่งนอกจากที่นั่งคนขับ",km:"កុំអនុញ្ញាតឱ្យជិះក្រៅពីកៅអីអ្នកបើកបរ។"},
+{id:28,ja:"点検した結果は記録として残します",hira:"てんけんした けっかは きろくとして のこします",roma:"TENKEN SHITA KEKKA WA KIROKU TOSHITE NOKOSHIMASU",answer:true,en:"Inspection results are kept as records.",si:"පරීක්ෂණ ප්‍රතිඵල සටහන් කරනු ලැබේ.",my:"စစ်ဆေးမှုရလဒ်များကို မှတ်တမ်းအဖြစ် သိမ်းဆည်းသည်။",vi:"Kết quả kiểm tra được lưu làm hồ sơ.",id:"Hasil inspeksi disimpan sebagai catatan.",tl:"Ang mga resulta ng inspeksyon ay pinapanatili bilang talaan.",th:"ผลการตรวจสอบถูกเก็บเป็นบันทึก",km:"លទ្ធផលការត្រួតពិនិត្យត្រូវបានរក្សាទុកជាកំណត់ត្រា។"},
+{id:29,ja:"トラクタショベルは、トラクタにバケットを取り付けた機械です",hira:"トラクタショベルは トラクタに バケットを とりつけた きかいです",roma:"TORAKUTA SYOBERU WA TORAKUTA NI BAKETTO WO TORITSUKETA KIKAI DESU",answer:true,en:"A tractor shovel is a machine with a bucket attached to a tractor.",si:"ට්‍රැක්ටර් ෂොවෙල් යනු ට්‍රැක්ටරයකට බාල්දියක් සවි කර ඇති යන්ත්‍රයකි.",my:"ထရက်တာသဘာဝသည် ထရက်တာပေါ်တွင် ဘားကက်တပ်ဆင်ထားသောစက်ဖြစ်သည်။",vi:"Máy xúc bánh lốp là máy có gàu gắn vào máy kéo.",id:"Traktor sekop adalah mesin dengan ember dipasang pada traktor.",tl:"Ang tractor shovel ay makinarya na may bucket na nakakabit sa tractor.",th:"รถตักดินแทรกเตอร์คือเครื่องจักรมีถังตักติดรถแทรกเตอร์",km:"Tractor shovel គឺជាម៉ាស៊ីនដែលមានថង់ភ្ជាប់ tractor។"},
+{id:30,ja:"エンジンは、燃料や燃焼方式により、ディーゼルエンジンとガソリンエンジンに分けられます",hira:"エンジンは ねんしょうほうしきにより ディーゼルエンジンと ガソリンエンジンに わけられます",roma:"ENJIN WA NENSYO HOSHIKI NI YORI DIZERU ENJIN TO GASORIN ENJIN NI WAKERAREMASU",answer:true,en:"Engines are classified into diesel and gasoline types.",si:"එන්ජින් ඩීසල් සහ ගැසොලින් ලෙස වර්ගීකරණය කෙරේ.",my:"အင်ဂျင်များကို ဒီဇယ်နှင့် ဂက်ဆိုလင်အင်ဂျင်အဖြစ် ခွဲခြားသည်။",vi:"Động cơ được phân loại thành diesel và xăng.",id:"Mesin diklasifikasikan menjadi diesel dan bensin.",tl:"Ang mga makina ay inuri sa diesel at gasoline.",th:"เครื่องยนต์แบ่งเป็นดีเซลและเบนซิน",km:"ម៉ាស៊ីនត្រូវបានចំណាត់ថ្នាក់ជា diesel និង gasoline។"},
+{id:31,ja:"油圧ショベルは、主に土の掘削作業に使います",hira:"ゆあつショベルは おもに つちの くっさく さぎょうに つかいます",roma:"YUATSU SYOBERU WA OMONI TSUCHI NO KUSSAKU SAGYO NI TSUKAIMASU",answer:true,en:"Hydraulic excavators are mainly used for soil excavation.",si:"හයිඩ්‍රොලික් කැණීම් යන්ත්‍ර ප්‍රධාන වශයෙන් පස කැණීම සඳහා.",my:"ဟိုက်ဒရောလစ် ထွင်းလှူစက်ကို ပင်မ မြေတူးဆွသောလုပ်ငန်းများတွင် သုံးသည်။",vi:"Máy đào thủy lực chủ yếu dùng đào đất.",id:"Ekskavator hidrolik terutama untuk penggalian tanah.",tl:"Ang hydraulic excavator ay pangunahing para sa pagkuha ng lupa.",th:"รถขุดไฮดรอลิกใช้เป็นหลักสำหรับขุดดิน",km:"ម៉ាស៊ីនជីក hydraulic ប្រើជាចម្បងសម្រាប់ជីកដី។"},
+{id:32,ja:"点検や自主検査の記録は保存しておきます",hira:"てんけんや じしゅけんさの きろくは ほぞんしておきます",roma:"TENKEN YA JISYU KENSA NO KIROKU WA HOZON SHITEOKIMASU",answer:true,en:"Records of inspections and self-inspections are kept.",si:"පරීක්ෂණ සහ ස්ව-පරීක්ෂණ වාර්තා තබා ගනී.",my:"စစ်ဆေးမှုများနှင့် ကိုယ်တိုင်စစ်ဆေးမှုများ မှတ်တမ်းထားရှိသည်။",vi:"Hồ sơ kiểm tra và tự kiểm tra được lưu.",id:"Catatan inspeksi dan inspeksi mandiri disimpan.",tl:"Ang mga talaan ng inspeksyon at self-inspection ay pinapanatili.",th:"บันทึกการตรวจสอบและการตรวจสอบด้วยตนเองเก็บไว้",km:"កំណត់ត្រានៃការត្រួតពិនិត្យត្រូវបានរក្សាទុក។"},
+{id:33,ja:"機械の能力を超える作業をしてはいけません",hira:"きかいの のうりょくを こえる さぎょうを してはいけません",roma:"KIKAI NO NORYOKU WO KOERU SAGYO WO SHITEWA IKEMASEN",answer:true,en:"Do not perform work exceeding the machine's capacity.",si:"යන්ත්‍රයේ ධාරිතාව ඉක්මවා යන කාර්යයන් නොකරන්න.",my:"စက်၏ ခွန်အားကို ကျော်လွန်သောလုပ်ငန်းများ မပြုလုပ်ပါနှင့်။",vi:"Không làm việc vượt quá công suất máy.",id:"Jangan lakukan pekerjaan melebihi kapasitas mesin.",tl:"Huwag gumawa ng trabahong lumalagpas sa kapasidad ng makinarya.",th:"อย่าทำงานเกินความสามารถเครื่องจักร",km:"កុំធ្វើការងារហួសពីសមត្ថភាពម៉ាស៊ីន។"},
+{id:34,ja:"目、耳、指、声を同時に使って点検します",hira:"め みみ ゆび こえを どうじに つかって てんけんします",roma:"ME MIMI YUBI KOE WO DOJI NI TSUKATTE TENKEN SHIMASU",answer:true,en:"Use eyes, ears, fingers, and voice simultaneously for inspection.",si:"ඇස්, කන්, ඇඟිලි සහ කටහඬ එකවර භාවිතා කරමින් පරීක්ෂා කරන්න.",my:"မျက်စိ၊ နား၊ လက်ချောင်းနှင့် အသံကို တစ်ပြိုင်နက် သုံး၍ စစ်ဆေးပါ။",vi:"Dùng mắt, tai, ngón tay và giọng cùng lúc để kiểm tra.",id:"Gunakan mata, telinga, jari, dan suara bersamaan untuk inspeksi.",tl:"Gamitin ang mga mata, tainga, daliri, at boses nang sabay para sa inspeksyon.",th:"ใช้ตา หู นิ้ว เสียงพร้อมกันตรวจสอบ",km:"ប្រើភ្នែក ត្រចៀក ម្រាមដៃ សំលេង ដំណាលគ្នាដើម្បីត្រួតពិនិត្យ។"},
+{id:35,ja:"バッテリは電気を蓄える装置です",hira:"バッテリは でんきを たくわえる そうちです",roma:"BATTERI WA DENKI WO TAKUWAERU SOCHI DESU",answer:true,en:"A battery is a device that stores electricity.",si:"බැටරියක් යනු විදුලිය ගබඩා කරන උපකරණයකි.",my:"ဘက်ထရီသည် လျှပ်စစ်သိမ်းဆည်းသောကိရိယာဖြစ်သည်။",vi:"Pin là thiết bị lưu trữ điện.",id:"Baterai adalah perangkat penyimpan listrik.",tl:"Ang baterya ay device na nag-iimbak ng kuryente.",th:"แบตเตอรี่เป็นอุปกรณ์สะสมไฟฟ้า",km:"ថ្ម battery ជាឧបករណ៍ស្តុកអគ្គិសនី។"},
+{id:36,ja:"点検の時、ブレーキや安全ロックを掛けます",hira:"てんけんの とき ブレーキや あんぜんロックは かけます",roma:"TENKEN NO TOKI BURE-KI YA ANZEN ROKKU WA KAKEMASU",answer:true,en:"During inspection, apply brakes and safety locks.",si:"පරීක්ෂා කිරීම් අතරතුර, තිරිිංග සහ ආරක්ෂිත අගුල් යොදනු ලැබේ.",my:"စစ်ဆေးနေစဉ် ဘရိတ်နှင့် ဘေးကင်းရေးသော့ကို အသုံးပြုပါ။",vi:"Khi kiểm tra, áp dụng phanh và khóa an toàn.",id:"Saat inspeksi, terapkan rem dan kunci keselamatan.",tl:"Sa inspeksyon, ilapat ang preno at safety lock.",th:"ระหว่างตรวจสอบ ใช้เบรกและล็อคนิรภัย",km:"ក្នុងការត្រួតពិនិត្យ អនុវត្ត ហ្ស្រ័ននិង safety lock។"},
+{id:37,ja:"作業中に機械に異常を見つけた時は、すぐに点検します",hira:"さぎょうちゅうに きかいに いじょうを みつけたときは すぐに てんけんします",roma:"SAGYOTYU NI KIKAI NI IJYO WO MITSUKETA TOKIWA SUGUNI TENKEN SHIMASU",answer:true,en:"When an abnormality is found during work, inspect immediately.",si:"ක්‍රියාත්මක කිරීමේදී අසාමාන්‍යතාවයක් දුටුවහොත්, වහාම පරීක්ෂා කරන්න.",my:"အလုပ်ပြုလုပ်နေစဉ် ပုံမှန်မဟုတ်သည်ကို တွေ့သောအခါ ချက်ချင်းစစ်ဆေးပါ။",vi:"Khi phát hiện bất thường khi làm việc, kiểm tra ngay.",id:"Ketika ditemukan kelainan saat bekerja, segera periksa.",tl:"Kapag may abnormalidad sa trabaho, agad itong suriin.",th:"เมื่อพบความผิดปกติขณะทำงาน ตรวจสอบทันที",km:"ពេលរកឃើញភាពមិនធម្មតា ត្រួតពិនិត្យភ្លាមៗ។"},
+{id:38,ja:"ローラは、土砂やアスファルトの締固め作業に使います",hira:"ローラは どしゃや アスファルトの しめかため さぎょうに つかいます",roma:"RO-RA WA DOSYA YA ASUFARUTO NO SHIMEKATAME SAGYO NI TSUKAIMASU",answer:true,en:"Rollers are used for compacting soil and asphalt.",si:"රෝලර් පස සහ ඇස්ෆල්ට් සම්පීඩනය සඳහා භාවිතා කෙරේ.",my:"ရိုလာများကို မြေနှင့် အာစပတ်ကို ဖိနင်းသောလုပ်ငန်းများတွင် သုံးသည်။",vi:"Máy cán dùng để đầm nén đất và nhựa đường.",id:"Roller digunakan untuk memadatkan tanah dan aspal.",tl:"Ang mga roller ay ginagamit para sa pag-compact ng lupa at aspalto.",th:"รถบดใช้อัดดินและยางมะตอย",km:"ម៉ាស៊ីន roller ប្រើ compacting ដីនិង asphalt។"},
+{id:39,ja:"機械の走行時は、バケットやブレードを低くします",hira:"きかいの そうこうじは バケットや ブレードを ひくくします",roma:"KIKAI NO SOKOU JI WA BAKETTO YA BURE-DO WO HIKUKU SHIMASU",answer:true,en:"When traveling, keep the bucket and blade low.",si:"ගමන් කරන විට, බාල්දිය සහ තලය පහත් කරන්න.",my:"သွားနေစဉ် ဘားကက်နှင့် ဘလိတ်ကို နိမ့်ချပါ။",vi:"Khi di chuyển, giữ bucket và blade thấp.",id:"Saat berjalan, jaga bucket dan blade tetap rendah.",tl:"Sa paglalakbay, panatilihing mababa ang bucket at blade.",th:"ขณะเดินทาง รักษาถังและใบมีดให้ต่ำ",km:"ពេលដំណើរ រក្សា bucket និងស្លាបឲ្យទាប។"},
+{id:40,ja:"エンジン停止後は、作業機レバーはすべて「ニュートラル」にし、ロックします",hira:"エンジンていしごは さぎょうきレバーは すべて ニュートラルに し ロックします",roma:"ENJIN TEISHI GO WA SAGYO KI REBA- WA SUBETE NYU-TORARU NI SHI ROKKU SHIMASU",answer:true,en:"After stopping the engine, set all work levers to neutral and lock.",si:"එන්ජිම නැවැත්වීමෙන් පසු, සියලු ලීවර් neutral ට දාලා lock කරන්න.",my:"အင်ဂျင်ပိတ်ပြီးနောက် လုပ်ငန်းလီဗာများကို ကြားနေ သို့ ထားပြီး သော့ခတ်ပါ။",vi:"Sau khi tắt máy, đặt tất cả cần về trung tính và khóa.",id:"Setelah mematikan mesin, atur semua tuas ke netral dan kunci.",tl:"Pagkatapos ihinto ang makina, itakda ang lahat ng lever sa neutral at i-lock.",th:"หลังดับเครื่อง ตั้งคันโยกทั้งหมดเป็นกลางและล็อค",km:"បន្ទាប់ពីបិទម៉ាស៊ីន ដាក់ lever ទាំងអស់ neutral ហើយ lock។"},
+];
+
+// ── Company-prefixed storage helpers ──
+let CUR_CO = '';
+const coKey = (k) => CUR_CO ? `${CUR_CO}_${k}` : k;
+const gP  = () => localStorage.getItem(coKey('tp')) || 'teacher2024';
+const sP  = v  => localStorage.setItem(coKey('tp'), v);
+const gSts= () => JSON.parse(localStorage.getItem(coKey('ts')) || '[]');
+const sSts= v  => localStorage.setItem(coKey('ts'), JSON.stringify(v));
+const gQC = () => parseInt(localStorage.getItem(coKey('tqc')) || '20');
+const gPM = () => parseInt(localStorage.getItem(coKey('tpm')) || '70');
+const gLang=() => localStorage.getItem(coKey('tlg')) || 'si';
+const gFC = () => JSON.parse(localStorage.getItem(coKey('tfc')) || '{}');
+const sFC = (id,v) => { const m=gFC(); m[id]=v; localStorage.setItem(coKey('tfc'), JSON.stringify(m)); };
+
+function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function showErr(m){const e=document.getElementById('auth-err');e.textContent=m;e.classList.add('on')}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500)}
+function normCo(s){return s.trim().toLowerCase().replace(/\s+/g,'_')}
+
+let authM='s';
+function authTab(m){authM=m;document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&m==='s')||(i===1&&m==='t')));document.getElementById('sf').style.display=m==='s'?'block':'none';document.getElementById('tf').style.display=m==='t'?'block':'none';document.getElementById('auth-err').classList.remove('on')}
+
+function sLogin(){
+ const co=document.getElementById('s-co').value.trim();
+ const n=document.getElementById('s-nm').value.trim();
+ const e=document.getElementById('s-em').value.trim();
+ if(!co){showErr('Please enter company name');return}
+ if(!n){showErr('Please enter your name');return}
+ if(!e||!e.includes('@')){showErr('Please enter valid email');return}
+ CUR_CO=normCo(co);
+ localStorage.setItem('tcu',JSON.stringify({name:n,email:e,company:co}));
+ startExam(n,e,co);
+}
+function tLogin(){
+ const co=document.getElementById('t-co').value.trim();
+ const pw=document.getElementById('t-pw').value;
+ if(!co){showErr('Please enter company name');return}
+ CUR_CO=normCo(co);
+ if(pw!==gP()){showErr('Incorrect password');return}
+ ss('teacher-screen');
+ document.getElementById('t-co-display').textContent='🏢 '+co;
+ renderT(co);
+}
+function tLogout(){ss('auth-screen');document.getElementById('t-pw').value='';CUR_CO=''}
+function sStudy(){
+ const co=document.getElementById('s-co').value.trim();
+ const n=document.getElementById('s-nm').value.trim();
+ const e=document.getElementById('s-em').value.trim();
+ if(!co){showErr('Please enter company name');return}
+ if(!n||!e||!e.includes('@')){showErr('Please enter name and email');return}
+ CUR_CO=normCo(co);
+ localStorage.setItem('tcu',JSON.stringify({name:n,email:e,company:co}));
+ ss('study-screen');
+ document.getElementById('study-co').textContent='🏢 '+co;
+ document.getElementById('study-co-badge').textContent='🏢 '+co;
+ showStudyHome();
+}
+
+let ES={qs:[],idx:0,score:0,stu:null};
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+function startExam(n,e,co){
+ const qs=shuf(Q).slice(0,Math.min(gQC(),Q.length));
+ ES={qs,idx:0,score:0,stu:{name:n,email:e,company:co}};
+ ss('exam-screen');
+ document.getElementById('exam-title').textContent=n+'さんの試験';
+ document.getElementById('exam-co').textContent='🏢 '+co;
+ document.getElementById('sc-scr').classList.remove('on');
+ renderQ();
+}
+function renderQ(){
+ const{qs,idx}=ES;
+ document.getElementById('prg').style.width=(idx/qs.length*100)+'%';
+ document.getElementById('prg-l').textContent=idx+'/'+qs.length;
+ if(idx>=qs.length){showScore();return}
+ const q=qs[idx];
+ document.getElementById('q-con').innerHTML=`<div class="card">
+  <div class="q-num">問 ${idx+1} / ${qs.length}</div>
+  <div class="q-ja">${q.ja}</div>
+  <div class="q-hira">${q.hira}</div>
+  <div class="q-roma">${q.roma}</div>
+  <div class="btn-row">
+   <button class="ans-btn" id="bt" onclick="ansQ(true)">〇 <span class="al">まる</span></button>
+   <button class="ans-btn" id="bf" onclick="ansQ(false)">✕ <span class="al">ばつ</span></button>
+  </div>
+  <div class="fb" id="fb"></div>
+ </div>`;
+}
+function ansQ(v){
+ const q=ES.qs[ES.idx],ok=v===q.answer;
+ if(ok)ES.score++;
+ const bt=document.getElementById('bt'),bf=document.getElementById('bf');
+ bt.disabled=true;bf.disabled=true;
+ const fb=document.getElementById('fb');
+ if(ok){(v?bt:bf).classList.add('bc');(!v?bt:bf).classList.add('bd');fb.textContent='✓ せいかい！正解！';fb.className='fb on ok'}
+ else{(v?bt:bf).classList.add('bw');(q.answer?bt:bf).classList.add('bc');fb.textContent='✗ ふせいかい。こたえ: '+(q.answer?'〇 まる':'✕ ばつ');fb.className='fb on ng'}
+ setTimeout(()=>{ES.idx++;renderQ()},1300);
+}
+function showScore(){
+ const{score,qs,stu}=ES,total=qs.length,pct=Math.round(score/total*100),pass=pct>=gPM();
+ const c=264,off=c-(c*pct/100);
+ document.getElementById('sc-arc').setAttribute('stroke-dashoffset',off);
+ document.getElementById('sc-arc').setAttribute('stroke',pass?'#1D9E75':'#E24B4A');
+ document.getElementById('sc-n').textContent=score;
+ document.getElementById('sc-d').textContent='/'+total;
+ document.getElementById('sc-msg').textContent=pass?'🎉 合格！ Pass!':'😔 不合格 Fail';
+ document.getElementById('sc-pct').textContent=pct+'% — Pass: '+gPM()+'%';
+ document.getElementById('prg').style.width='100%';
+ document.getElementById('prg-l').textContent=total+'/'+total;
+ document.getElementById('q-con').innerHTML='';
+ document.getElementById('sc-scr').classList.add('on');
+ const sts=gSts();
+ const ei=sts.findIndex(s=>s.email===stu.email);
+ if(ei>=0){sts[ei].attempts=sts[ei].attempts||[];sts[ei].attempts.push({score:pct,date:new Date().toISOString(),correct:score,total});sts[ei].lastScore=pct;sts[ei].lastDate=new Date().toISOString()}
+ else sts.push({name:stu.name,email:stu.email,lastScore:pct,lastDate:new Date().toISOString(),attempts:[{score:pct,date:new Date().toISOString(),correct:score,total}]});
+ sSts(sts);
+}
+function retryExam(){const u=JSON.parse(localStorage.getItem('tcu')||'{}');if(u.name)startExam(u.name,u.email,u.company);else ss('auth-screen')}
+
+let dChart=null,sChart2=null;
+function tTab(n){
+ document.querySelectorAll('.t-tab').forEach((b,i)=>b.classList.toggle('active',['ov','st','ch','sh','se'][i]===n));
+ document.querySelectorAll('.t-panel').forEach(p=>p.classList.remove('active'));
+ document.getElementById('p-'+n).classList.add('active');
+ if(n==='ch')renderCharts();
+ if(n==='sh'){
+  const url=window.location.href.split('?')[0];
+  document.getElementById('sh-url').textContent=url;
+ }
+}
+function renderT(co){document.getElementById('qc').value=gQC();document.getElementById('pm').value=gPM();renderOv();renderStList()}
+function renderOv(){
+ const sts=gSts(),pm=gPM();
+ document.getElementById('ov-tot').textContent=sts.length;
+ const p=sts.filter(s=>s.lastScore>=pm).length;
+ document.getElementById('ov-pas').textContent=p;
+ document.getElementById('ov-fai').textContent=sts.length-p;
+ if(sts.length){const sc=sts.map(s=>s.lastScore);document.getElementById('ov-avg').textContent=Math.round(sc.reduce((a,b)=>a+b,0)/sc.length)+'%';document.getElementById('ov-hi').textContent=Math.max(...sc)+'%';document.getElementById('ov-lo').textContent=Math.min(...sc)+'%'}
+ const rec=[...sts].sort((a,b)=>new Date(b.lastDate)-new Date(a.lastDate)).slice(0,5);
+ document.getElementById('rec-list').innerHTML=rec.length?rec.map(sRow).join(''):'<p style="color:var(--muted);font-size:12px">No students yet</p>';
+}
+function sRow(s){
+ const p=s.lastScore>=gPM(),in2=(s.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),dt=s.lastDate?new Date(s.lastDate).toLocaleDateString('ja-JP'):'';
+ return`<div class="s-row"><div class="s-av">${in2}</div><div class="s-info"><div class="s-name">${s.name}</div><div class="s-sub">${dt}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:${p?'var(--green)':'var(--red)'}">${s.lastScore}%</div><span class="badge ${p?'pass':'fail'}">${p?'Pass':'Fail'}</span></div></div>`;
+}
+function renderStList(){
+ const sts=gSts().sort((a,b)=>new Date(b.lastDate)-new Date(a.lastDate));
+ document.getElementById('all-st').innerHTML=sts.length?sts.map(sRow).join(''):'<p style="color:var(--muted);font-size:12px">No students yet</p>';
+ const sel=document.getElementById('st-sel');
+ sel.innerHTML='<option value="">-- Select student --</option>';
+ sts.forEach(s=>sel.innerHTML+=`<option value="${s.email}">${s.name}</option>`);
+}
+function renderCharts(){
+ const sts=gSts(),bins=[0,0,0,0,0];
+ sts.forEach(s=>{bins[Math.min(4,Math.floor(s.lastScore/20))]++});
+ if(dChart)dChart.destroy();
+ const c1=document.getElementById('dc').getContext('2d');
+ dChart=new Chart(c1,{type:'bar',data:{labels:['0-19%','20-39%','40-59%','60-79%','80-100%'],datasets:[{data:bins,backgroundColor:['#FCEBEB','#F0997B','#FAC775','#9FE1CB','#1D9E75'],borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+}
+function renderSChart(){
+ const em=document.getElementById('st-sel').value;
+ if(!em){if(sChart2)sChart2.destroy();return}
+ const s=gSts().find(t=>t.email===em);
+ if(!s||!s.attempts||!s.attempts.length)return;
+ if(sChart2)sChart2.destroy();
+ const c2=document.getElementById('sc2').getContext('2d');
+ sChart2=new Chart(c2,{type:'line',data:{labels:s.attempts.map((_,i)=>'#'+(i+1)),datasets:[{label:s.name,data:s.attempts.map(a=>a.score),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,.1)',tension:.3,fill:true,pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}}}}});
+}
+function cpLink(){const u=document.getElementById('sh-url').textContent;navigator.clipboard&&navigator.clipboard.writeText(u).then(()=>toast('Link copied! ✓'))}
+function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent('Exam App: '+document.getElementById('sh-url').textContent),'_blank')}
+function shareTG(){window.open('https://t.me/share/url?url='+encodeURIComponent(document.getElementById('sh-url').textContent),'_blank')}
+function chgPw(){const p=document.getElementById('np').value.trim();if(!p||p.length<4){toast('≥ 4 chars');return}sP(p);document.getElementById('np').value='';toast('Password saved ✓')}
+function saveQC(){const v=parseInt(document.getElementById('qc').value);if(v<5||v>40)return;localStorage.setItem(coKey('tqc'),v);toast('Saved ✓')}
+function savePM(){const v=parseInt(document.getElementById('pm').value);if(v<1||v>100)return;localStorage.setItem(coKey('tpm'),v);toast('Saved ✓')}
+function clearAll(){if(!confirm('Delete all student data for this company?'))return;sSts([]);renderT();toast('Cleared')}
+function openOwner(){
+ const sts=gSts();
+ document.getElementById('own-modal-h2').textContent='📋 Students — '+CUR_CO;
+ document.getElementById('own-list').innerHTML=sts.map(s=>`<tr><td>${s.name}</td><td>${s.email}</td><td>${s.lastScore||0}%</td></tr>`).join('')||'<tr><td colspan="3" style="color:var(--muted)">No data</td></tr>';
+ document.getElementById('own-modal').classList.add('on');
+}
+function closeOwner(){document.getElementById('own-modal').classList.remove('on')}
+function expCSV(){
+ const sts=gSts();
+ let c='Name,Email,Score,Attempts\n';
+ sts.forEach(s=>{c+=`"${s.name}","${s.email}",${s.lastScore||0}%,${(s.attempts||[]).length}\n`});
+ const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download=CUR_CO+'_results.csv';a.click();
+}
+
+function buildLangGrid(){
+ const g=document.getElementById('lg-grid'),cur=gLang();
+ g.innerHTML=LANGS.map(l=>`<div class="lg-card${cur===l.k?' sel':''}" onclick="selLang('${l.k}')"><div class="lg-name">${l.name}</div><div class="lg-nat">${l.nat}</div></div>`).join('');
+}
+function selLang(k){localStorage.setItem(coKey('tlg'),k);buildLangGrid();toast('Language saved ✓')}
+
+let fcQ=[],fcIdx=0,fcKnow=0,fcRev=0,fcFlipped=false;
+function showStudyHome(){
+ document.getElementById('sh-panel').style.display='block';
+ document.getElementById('fc-panel').style.display='none';
+ document.getElementById('vocab-panel').style.display='none';
+ buildLangGrid();
+ const m=gFC();
+ const kn=Object.values(m).filter(v=>v==='know').length,rv=Object.values(m).filter(v=>v==='review').length;
+ const el=document.getElementById('fc-prog-info');
+ if(kn+rv>0)el.innerHTML=`<span style="color:var(--green);font-weight:600">✓ ${kn} Know</span> &nbsp; <span style="color:var(--amber);font-weight:600">🔁 ${rv} review</span> &nbsp; <span style="color:var(--muted)">${Q.length-kn-rv} untouched</span>`;
+ else el.textContent='No flash cards played yet';
+}
+function getTr(q){const lk=gLang();return q[lk]||q.en||''}
+function startFC(mode){
+ document.getElementById('sh-panel').style.display='none';
+ document.getElementById('fc-panel').style.display='block';
+ document.getElementById('vocab-panel').style.display='none';
+ document.getElementById('fc-done').style.display='none';
+ document.getElementById('fc-card').style.display='flex';
+ document.getElementById('fc-act-btns').style.display='none';
+ const m=gFC();
+ if(mode==='review'){fcQ=Q.filter(q=>m[q.id]==='review'||!m[q.id]);if(!fcQ.length){toast('No review cards!');showStudyHome();return}}
+ else fcQ=[...Q];
+ for(let i=fcQ.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcQ[i],fcQ[j]]=[fcQ[j],fcQ[i]]}
+ fcIdx=0;fcKnow=0;fcRev=0;renderFC();
+}
+function renderFC(){
+ if(fcIdx>=fcQ.length){showFCDone();return}
+ const q=fcQ[fcIdx];fcFlipped=false;
+ document.getElementById('fc-card').classList.remove('flip');
+ document.getElementById('fc-act-btns').style.display='none';
+ document.getElementById('fc-cnt').textContent=(fcIdx+1)+' / '+fcQ.length;
+ document.getElementById('fc-pf').style.width=(fcIdx/fcQ.length*100)+'%';
+ document.getElementById('fc-ja').textContent=q.ja;
+ document.getElementById('fc-hira').textContent=q.hira;
+ document.getElementById('fc-roma').textContent=q.roma;
+ document.getElementById('fc-tr').textContent=getTr(q);
+ document.getElementById('fc-ja-b').textContent=q.ja;
+ const badge=document.getElementById('fc-badge');
+ badge.textContent=q.answer?'〇 ✓ True':'✕ False';
+ badge.className='fc-badge '+(q.answer?'t':'f');
+ document.getElementById('fc-sub').textContent=q.answer?'Correct statement':'Incorrect statement';
+ document.getElementById('fc-tr-b').textContent=getTr(q);
+}
+function flipFC(){fcFlipped=!fcFlipped;document.getElementById('fc-card').classList.toggle('flip',fcFlipped);document.getElementById('fc-act-btns').style.display=fcFlipped?'block':'none'}
+function fcMark(t){sFC(fcQ[fcIdx].id,t);if(t==='know')fcKnow++;else fcRev++;fcIdx++;renderFC()}
+function showFCDone(){document.getElementById('fc-card').style.display='none';document.getElementById('fc-act-btns').style.display='none';document.getElementById('fc-kn').textContent=fcKnow;document.getElementById('fc-rv').textContent=fcRev;document.getElementById('fc-done').style.display='block'}
+function showVocab(){
+ document.getElementById('sh-panel').style.display='none';
+ document.getElementById('fc-panel').style.display='none';
+ document.getElementById('vocab-panel').style.display='block';
+ renderVocab(Q);
+}
+function renderVocab(qs){
+ const lk=gLang();
+ document.getElementById('vocab-items').innerHTML=qs.map(q=>`<div class="v-item"><div class="v-ih"><div class="v-ja">${q.ja}</div><span class="v-ab ${q.answer?'t':'f'}">${q.answer?'〇 ✓':'✕ ✗'}</span></div><div class="v-hira">${q.hira}</div><div class="v-tr">${q[lk]||q.en||''}</div></div>`).join('');
+}
+function filterVocab(v){
+ if(!v.trim()){renderVocab(Q);return}
+ const lv=v.toLowerCase();
+ renderVocab(Q.filter(q=>q.ja.toLowerCase().includes(lv)||q.hira.includes(lv)||q.roma.toLowerCase().includes(lv)||(q.en||'').toLowerCase().includes(lv)||(q.si||'').includes(v)));
+}
+
+// ── UI Language System ──
+const UI_STRINGS = {
+ ja:{co:'🏢 会社名',nm:'お名前',tco:'🏢 会社名',exam:'📝 試験を開始',study:'📚 学習モード',student:'🎓 学生',teacher:'👨‍🏫 先生'},
+ en:{co:'🏢 Company',nm:'Name',tco:'🏢 Company',exam:'📝 Start Exam',study:'📚 Study Mode',student:'🎓 Student',teacher:'👨‍🏫 Teacher'},
+ si:{co:'🏢 සමාගම',nm:'නම',tco:'🏢 සමාගම',exam:'📝 විභාගය',study:'📚 අධ්‍යයනය',student:'🎓 ශිෂ්‍ය',teacher:'👨‍🏫 ගුරු'},
+ my:{co:'🏢 ကုမ္ပဏီ',nm:'နာမည်',tco:'🏢 ကုမ္ပဏီ',exam:'📝 စာမေးပွဲ',study:'📚 သင်ယူမှု',student:'🎓 ကျောင်းသား',teacher:'👨‍🏫 ဆရာ'},
+ vi:{co:'🏢 Công ty',nm:'Tên',tco:'🏢 Công ty',exam:'📝 Bắt đầu thi',study:'📚 Học tập',student:'🎓 Học sinh',teacher:'👨‍🏫 Giáo viên'},
+ id:{co:'🏢 Perusahaan',nm:'Nama',tco:'🏢 Perusahaan',exam:'📝 Mulai Ujian',study:'📚 Mode Belajar',student:'🎓 Siswa',teacher:'👨‍🏫 Guru'},
+ tl:{co:'🏢 Kumpanya',nm:'Pangalan',tco:'🏢 Kumpanya',exam:'📝 Simulan ang Exam',study:'📚 Study Mode',student:'🎓 Estudyante',teacher:'👨‍🏫 Guro'},
+ th:{co:'🏢 บริษัท',nm:'ชื่อ',tco:'🏢 บริษัท',exam:'📝 เริ่มสอบ',study:'📚 โหมดเรียน',student:'🎓 นักเรียน',teacher:'👨‍🏫 ครู'},
+ km:{co:'🏢 ក្រុមហ៊ុន',nm:'ឈ្មោះ',tco:'🏢 ក្រុមហ៊ុន',exam:'📝 ចាប់ផ្តើមប្រឡង',study:'📚 របៀបសិក្សា',student:'🎓 សិស្ស',teacher:'👨‍🏫 គ្រូ'},
+ hi:{co:'🏢 कंपनी',nm:'नाम',tco:'🏢 कंपनी',exam:'📝 परीक्षा शुरू करें',study:'📚 अध्ययन मोड',student:'🎓 छात्र',teacher:'👨‍🏫 शिक्षक'},
+ ne:{co:'🏢 कम्पनी',nm:'नाम',tco:'🏢 कम्पनी',exam:'📝 परीक्षा सुरु गर्नुहोस्',study:'📚 अध्ययन मोड',student:'🎓 विद्यार्थी',teacher:'👨‍🏫 शिक्षक'},
+};
+let curUILang = localStorage.getItem('ui_lang') || 'ja';
+function setUILang(lk){
+ curUILang=lk;localStorage.setItem('ui_lang',lk);
+ const s=UI_STRINGS[lk]||UI_STRINGS.ja;
+ const setT=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+ setT('lbl-co',s.co);setT('lbl-nm',s.nm);setT('lbl-tco',s.tco);
+ setT('btn-exam',s.exam);setT('btn-study',s.study);
+ // update tab buttons
+ const tabs=document.querySelectorAll('.tab');
+ if(tabs[0])tabs[0].textContent=s.student;
+ if(tabs[1])tabs[1].textContent=s.teacher;
+ // highlight active lang button
+ document.querySelectorAll('[id^="ul-"]').forEach(b=>{
+  b.style.background=b.id==='ul-'+lk?'var(--accent)':'var(--bg)';
+  b.style.color=b.id==='ul-'+lk?'#fff':'var(--muted)';
+  b.style.borderColor=b.id==='ul-'+lk?'var(--accent)':'var(--bdr)';
+  b.style.fontWeight=b.id==='ul-'+lk?'600':'500';
+ });
+ // also set study lang to match
+ localStorage.setItem(coKey?coKey('tlg'):'tlg', lk);
+}
+// init UI lang
+document.addEventListener('DOMContentLoaded',()=>setUILang(curUILang));
+
+function shareEmail(){
+ const url=document.getElementById('sh-url').textContent;
+ const co=CUR_CO;
+ const sub=encodeURIComponent('建設機械 Exam App — '+co);
+ const body=encodeURIComponent('Please use this link to access the exam:\n\n'+url+'\n\nCompany name to enter: '+co+'\n\n建設機械施工基礎級 試験アプリ');
+ window.open('mailto:?subject='+sub+'&body='+body,'_blank');
+}
+</script>
+</body>
+</html>
